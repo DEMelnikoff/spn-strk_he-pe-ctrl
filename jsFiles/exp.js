@@ -13,23 +13,23 @@ const exp = (function() {
 
     const winRateDraw = 0;
     let settings = {
-        winRate: ['high', 'low'][winRateDraw],
-        wedgeText: [['9 winning wedges (which are green)', '1 losing wedge (which is gray)'], ['1 winning wedge (which is green)', '9 losing wedges (which are gray)']][winRateDraw],
+        winRate: "75%",
+        wedgeText: ['3 winning wedges (which are green)', '1 losing wedge (which is gray)'],
         gameType: [['binary', 'streak'], ['streak', 'binary']][Math.floor(Math.random() * 2)],
-        streakType: ['continuous', 'binary'][Math.floor(Math.random() * 2)],
-        gif: [`<img src="./img/easyWheel.gif" style="width:400px; height:400px">`, `<img src="./img/hardWheel.gif" style="width:400px; height:400px">`][winRateDraw],
+        binaryType: ['standard', 'he-enhancing', 'pe-enhancing'][Math.floor(Math.random() * 3)],
+        gif: `<img src="./img/easyWheel.gif" style="width:400px; height:400px">`,
         nSpins: 30,
     };
 
     jsPsych.data.addProperties({
         gameType_1: settings.gameType[0],
         gameType_2: settings.gameType[1],
-        streakType: settings.streakType,
+        binaryType: settings.binaryType,
         winRate: settings.winRate,
         nSpins: settings.nSpins,
     });
 
-    console.log(settings.gameType, settings.streakType);
+    console.log(settings.gameType, settings.binaryType);
 
 
    /*
@@ -98,6 +98,102 @@ const exp = (function() {
                 <p>If you land on a losing wedge,
                 <br>you'll see this message indicating that you earned 0 tokens.</p>
                 <div class="loss-text-inst">+0 Tokens</div>
+            </div>`,
+        ],
+
+        binary_he_1: [            
+            `<div class='parent'>
+                <p>In both rounds of Spin the Wheel, you'll earn tokens by spinning a prize wheel like this one.
+                <br>The wheel contains ${settings.wedgeText[0]} and ${settings.wedgeText[1]}.</p>
+                <p>To spin the wheel, simply grab it with your mouse cursor and give it a spin!</p>
+                ${settings.gif}
+            </div>`,
+
+            `<div class='parent'>
+                <p>In Round 1 of Spin the Wheel, you'll earn tokens after each spin.</p>
+                <p>If you land on a winning wedge, you'll earn between 7 and 11 tokens.
+                <br>If you land on a losing wedge, you'll earn between 1 and 5 tokens.</p>
+                <p>(The specific number of tokens is randomly determined).</p>
+            </div>`,
+
+            `<div class='parent'>
+                <p>If you land on a winning wedge,
+                <br>you'll see a message like this indicating whether you earned 7, 8, 9, 10, or 11 tokens.</p>
+                <div class="win-text-inst">+10 Tokens</div>
+            </div>`,
+
+            `<div class='parent'>
+                <p>If you land on a losing wedge,
+                <br>you'll see a message like this indicating whether you earned 1, 2, 3, 4, or 5 tokens.</p>
+                <div class="loss-text-inst">+2 Tokens</div>
+            </div>`,
+        ],
+
+        binary_he_2: [            
+            `<div class='parent'>
+                <p>Round 2 of Spin the Wheel is identical to Round 1 with one exception:<br>Instead of earning tokens for streaks of consecutive wins, you'll earn tokens after each individual spin.</p>
+                <p>If you land on a winning wedge, you'll earn between 7 and 11 tokens.
+                <br>If you land on a losing wedge, you'll earn between 1 and 5 tokens.</p>
+                <p>(The specific number of tokens is randomly determined).</p>
+            </div>`,
+
+            `<div class='parent'>
+                <p>If you land on a winning wedge,
+                <br>you'll see a message like this indicating whether you earned 7, 8, 9, 10, or 11 tokens.</p>
+                <div class="win-text-inst">+10 Tokens</div>
+            </div>`,
+
+            `<div class='parent'>
+                <p>If you land on a losing wedge,
+                <br>you'll see a message like this indicating whether you earned 1, 2, 3, 4, or 5 tokens.</p>
+                <div class="loss-text-inst">+2 Tokens</div>
+            </div>`,
+        ],
+
+        binary_pe_1: [            
+            `<div class='parent'>
+                <p>In both rounds of Spin the Wheel, you'll earn tokens by spinning a prize wheel like this one.
+                <br>The wheel contains ${settings.wedgeText[0]} and ${settings.wedgeText[1]}.</p>
+                <p>To spin the wheel, simply grab it with your mouse cursor and give it a spin!</p>
+                ${settings.gif}
+            </div>`,
+
+            `<div class='parent'>
+                <p>In Round 1 of Spin the Wheel, you'll earn tokens each time you land on a winning wedge, and you'll lose tokens each time you land on a losing wedge.</p>
+                <p>Specifically, each time you land on a winning wedge, you'll earn 15 tokens.
+                <br>You'll lose 15 tokens each time you land on a losing wedge.</p>
+            </div>`,
+
+            `<div class='parent'>
+                <p>If you land on a winning wedge,
+                <br>you'll see this message indicating that you earned 15 tokens.</p>
+                <div class="win-text-inst">+15 Tokens</div>
+            </div>`,
+
+            `<div class='parent'>
+                <p>If you land on a losing wedge,
+                <br>you'll see this message indicating that you lose 15 tokens.</p>
+                <div class="loss-text-inst">-15 Tokens</div>
+            </div>`,
+        ],
+
+        binary_pe_2: [            
+            `<div class='parent'>
+                <p>Round 2 of Spin the Wheel is identical to Round 1 with one exception: Instead of earning tokens for streaks of consecutive wins, you'll earn tokens for each individual win.</p>
+                <p>Specifically, each time you land on a winning wedge, you'll earn 15 tokens.
+                <br>You'll lose 15 tokens each time you land on a losing wedge.</p>
+            </div>`,
+
+            `<div class='parent'>
+                <p>If you land on a winning wedge,
+                <br>you'll see this message indicating that you earned 15 tokens.</p>
+                <div class="win-text-inst">+15 Tokens</div>
+            </div>`,
+
+            `<div class='parent'>
+                <p>If you land on a losing wedge,
+                <br>you'll see this message indicating that you lost 15 tokens.</p>
+                <div class="loss-text-inst">-15 Tokens</div>
             </div>`,
         ],
 
@@ -198,78 +294,6 @@ const exp = (function() {
             </div>`,
         ],
 
-        bStreak_1: [
-            `<div class='parent'>
-                <p>In both rounds of Spin the Wheel, you'll earn tokens by spinning a prize wheel like this one.
-                <br>The wheel contains ${settings.wedgeText[0]} and ${settings.wedgeText[1]}.</p>
-                <p>To spin the wheel, simply grab it with your mouse cursor and give it a spin!</p>
-                ${settings.gif}
-            </div>`,
-
-            `<div class='parent'>
-                <p>In Round 1 of Spin the Wheel, you'll earn tokens for achieving streaks of 3 consecutive wins.</p>
-                <p>Specifically, you'll earn 30 tokens if you land on a winning wedge 3 spins in a row.
-                If you land on a losing wedge before achieving a streak of 3, you'll earn 0 tokens.</p>
-            </div>`,
-            
-            `<div class='parent'>
-                <p>Throughout the game, you'll see the length of your current streak.
-                <br>For example, after two consecutive wins, you'd see the following:</p>
-                <div class="score-board">
-                    <div class="score-board-title">Current Streak:</div>
-                    <div class="score-board-score">2 / 3</div>
-                </div>
-            </div>`,
-            
-            `<div class='parent'>
-                <p>If you achieve a streak of 3,
-                <br>you'll see this message indicating that you earned 30 tokens.</p>
-                <div class="score-board">
-                    <div class="score-board-title">Current Streak:</div>
-                    <div class="score-board-score">3 / 3</div>
-                </div>
-                <div class="win-text-inst">+30 Tokens</div>
-            </div>`,
-
-            `<div class='parent'>
-                <p>If you lose before achieving a streak of 3,
-                <br>you'll see this message indicating that you earned 0 tokens.</p>
-                <div class="loss-text-inst">+0 Tokens</div>
-            </div>`,
-        ],
-
-        bStreak_2: [
-            `<div class='parent'>
-                <p>Round 2 of Spin the Wheel is identical to Round 1 with one exception: Instead of earning tokens for each individual win, you'll earn tokens for achieving streaks of 3 consecutive wins.</p>
-                <p>Specifically, you'll earn 30 tokens if you land on a winning wedge 3 spins in a row. If you land on a losing wedge before achieving a streak of 3, you'll earn 0 tokens.</p>
-            </div>`,
-            
-            `<div class='parent'>
-                <p>Throughout Round 2, you'll see the length of your current streak.
-                <br>For example, after two consecutive wins, you'd see the following:</p>
-                <div class="score-board">
-                    <div class="score-board-title">Current Streak:</div>
-                    <div class="score-board-score">2 / 3</div>
-                </div>
-            </div>`,
-            
-            `<div class='parent'>
-                <p>If you achieve a streak of 3,
-                <br>you'll see this message indicating that you earned 30 tokens.</p>
-                <div class="score-board">
-                    <div class="score-board-title">Current Streak:</div>
-                    <div class="score-board-score">3 / 3</div>
-                </div>
-                <div class="win-text-inst">+30 Tokens</div>
-            </div>`,
-
-            `<div class='parent'>
-                <p>If you lose before achieving a streak of 3,
-                <br>you'll see this message indicating that you earned 0 tokens.</p>
-                <div class="loss-text-inst">+0 Tokens</div>
-            </div>`,
-        ],
-
         readyToPlay_1: [
             `<div class='parent'>
                 <p>You're ready to play Round 1 of Spin the Wheel!</p>
@@ -311,12 +335,14 @@ const exp = (function() {
         const intro = {
             type: jsPsychInstructions,
             pages: function () {
-                if (settings.gameType[0] == "binary") {
-                    return html.binary_1;
-                } else if (settings.streakType == "continuous") {
+                if (settings.gameType[0] == "streak") {
                     return html.cStreak_1;
-                } else {
-                    return html.bStreak_1;
+                } else if (settings.binaryType == "standard") {
+                    return html.binary_1;
+                } else if (settings.binaryType == "he-enhancing") {
+                    return html.binary_he_1;
+                } else if (settings.binaryType == "pe-enhancing") {
+                    return html.binary_pe_1
                 }
             },
             show_clickable_nav: true,
@@ -337,8 +363,7 @@ const exp = (function() {
             allow_keys: false,
         };
 
-        const attnChk_option = (settings.streakType == "continuous") ? `Streaks of consecutive wins.` : `Streaks of 3 consecutive wins.`;
-        const correctAnswer = (settings.gameType[0] == "binary") ? [`Each individual win.`] : [attnChk_option];
+        const correctAnswer = (settings.gameType[0] == "binary") ? [`Each individual win.`] : [`Streaks of consecutive wins.`];
 
         const attnChk = {
             type: jsPsychSurveyMultiChoice,
@@ -347,7 +372,7 @@ const exp = (function() {
                 {
                     prompt: "In Round 1 of Spin the Wheel, I'll earn tokens for...", 
                     name: `attnChk1`, 
-                    options: [`Each individual win.`, attnChk_option],
+                    options: [`Each individual win.`, `Streaks of consecutive wins.`],
                 },
             ],
             scale_width: 500,
@@ -393,13 +418,15 @@ const exp = (function() {
         const intro = {
             type: jsPsychInstructions,
             pages: function () {
-                if (settings.gameType[1] == "binary") {
-                    return html.binary_2;
-                } else if (settings.streakType == "continuous") {
+                if (settings.gameType[1] == "streak") {
                     return html.cStreak_2;
-                } else {
-                    return html.bStreak_2;
-                }
+                } else if (settings.binaryType == "standard") {
+                    return html.binary_2;
+                } else if (settings.binaryType == "he-enhancing") {
+                    return html.binary_he_2;
+                } else if (settings.binaryType == "pe-enhancing") {
+                    return html.binary_pe_2;
+                };
             },
             show_clickable_nav: true,
             post_trial_gap: 500,
@@ -419,8 +446,7 @@ const exp = (function() {
             allow_keys: false,
         };
 
-        const attnChk_option = (settings.streakType == "continuous") ? `Streaks of consecutive wins.` : `Streaks of 3 consecutive wins.`;
-        const correctAnswer = (settings.gameType[1] == "binary") ? [`Each individual win.`] : [attnChk_option];
+        const correctAnswer = (settings.gameType[1] == "binary") ? [`Each individual win.`] : [`Streaks of consecutive wins.`];
 
         const attnChk = {
             type: jsPsychSurveyMultiChoice,
@@ -429,7 +455,7 @@ const exp = (function() {
                 {
                     prompt: "In Round 2 of Spin the Wheel, I'll earn tokens for...", 
                     name: `attnChk1`, 
-                    options: [`Each individual win.`, attnChk_option],
+                    options: [`Each individual win.`, `Streaks of consecutive wins.`],
                 },
             ],
             scale_width: 500,
@@ -484,13 +510,24 @@ const exp = (function() {
             win: {color:"green", label:"W"},
             loss: {color:"grey", label:"L"},
         };
-        const nWins = (winRate == "high") ? 9 : 1;
-        const nLoss = (winRate == "high") ? 1 : 9;
+        const nWins = (winRate == "75%") ? 3 : 1;
+        const nLoss = (winRate == "75%") ? 1 : 3;
         const winArray = Array(nWins).fill(wedges.win);
         const lossArray = Array(nLoss).fill(wedges.loss);
         const wedgeArray = winArray.concat(lossArray);
         return wedgeArray;
     };
+
+    const makeTokenArray_loss = function() {
+      return jsPsych.randomization.repeat([1, 2, 3, 4, 5], 1);
+    };
+
+    const makeTokenArray_win = function() {
+      return jsPsych.randomization.repeat([7, 8, 9, 10, 11], 1);
+    };
+
+    let tokenArray_loss = makeTokenArray_loss();
+    let tokenArray_win = makeTokenArray_win();
 
     const wedgeArray = makeWedgeArray(settings.winRate);
 
@@ -519,11 +556,8 @@ const exp = (function() {
                 if (settings.gameType[round] == "binary") {
                     return ''
                 };
-                if (settings.gameType[round] == "streak" && settings.streakType == "continuous") {
+                if (settings.gameType[round] == "streak") {
                     return scoreBoard_html.replace('{title}', 'Current Streak:').replace('{number}', currentStreak);
-                };
-                if (settings.gameType[round] == "streak" && settings.streakType == "binary") {
-                    return scoreBoard_html.replace('{title}', 'Current Streak:').replace('{number}', `${currentStreak} / 3`);
                 };
             },
             data: {round: round + 1},
@@ -533,7 +567,7 @@ const exp = (function() {
                 if (outcome == "W") {
                     currentStreak++;
                 };
-                if (outcome == "L" || settings.gameType[round] == "streak" && settings.streakType == "binary" && currentStreak == 3) {
+                if (outcome == "L") {
                     finalStreak = currentStreak;
                     currentStreak = 0;
                 };
@@ -545,7 +579,7 @@ const exp = (function() {
             stimulus: function() {
                 let standardFeedback;
 
-                if (settings.gameType[round] == "binary") {
+                if (settings.gameType[round] == "binary" && settings.binaryType == "standard") {
                     if (outcome == "W") {
                         standardFeedback = '<div class="score-board-blank"></div> <div class="feedback-area"> <div class="win-text">+10 Tokens</div> </div>';
                     } else {
@@ -553,7 +587,27 @@ const exp = (function() {
                     }
                 };
 
-                if (settings.gameType[round] == "streak" && settings.streakType == "continuous") {
+                if (settings.gameType[round] == "binary" && settings.binaryType == "he-enhancing") {
+                    if (outcome == "W") {
+                        let nTokens = tokenArray_win.pop();
+                        let tokenMessage = (nTokens == 1) ? `+1 Token` : `+${nTokens} Tokens`
+                        standardFeedback = `<div class="score-board-blank"></div> <div class="feedback-area"> <div class="win-text">${tokenMessage}</div> </div>`;
+                    } else {
+                        let nTokens = tokenArray_loss.pop();
+                        let tokenMessage = (nTokens == 1) ? `+1 Token` : `+${nTokens} Tokens`
+                        standardFeedback = `<div class="score-board-blank"></div> <div class="feedback-area"> <div class="loss-text">${tokenMessage}</div> </div>`;
+                    }
+                };
+
+                if (settings.gameType[round] == "binary" && settings.binaryType == "pe-enhancing") {
+                    if (outcome == "W") {
+                        standardFeedback = `<div class="score-board-blank"></div> <div class="feedback-area"> <div class="win-text">+15 Tokens</div> </div>`;
+                    } else {
+                        standardFeedback = `<div class="score-board-blank"></div> <div class="feedback-area"> <div class="loss-text">-15 Tokens</div> </div>`;
+                    }
+                };
+
+                if (settings.gameType[round] == "streak") {
                     if (outcome == "W") {
                         standardFeedback = scoreBoard_html.replace('{title}', 'Current Streak:').replace('{number}', `<span class="text-highlight">${currentStreak}</span>`) + `<div class="feedback-area"></div>`;
                     } else if (finalStreak > 0) {
@@ -563,16 +617,6 @@ const exp = (function() {
                     }
                 };
 
-                if (settings.gameType[round] == "streak" && settings.streakType == "binary") {
-                    if (outcome == "W" && finalStreak == 3) {
-                        standardFeedback = scoreBoard_html.replace('{title}', 'Current Streak:').replace('{number}', `<span class="text-highlight">${finalStreak}</span> / <span class="text-highlight">3</span>`) + `<div class="feedback-area"> <div class="win-text">+${10 * finalStreak} Tokens</div> </div>`;
-                    } else if (outcome == "W" && finalStreak < 3) {
-                        standardFeedback = scoreBoard_html.replace('{title}', 'Current Streak:').replace('{number}', `<span class="text-highlight">${currentStreak}</span> / 3`) + `<div class="feedback-area"></div>`;
-                    } else {
-                        standardFeedback = scoreBoard_html.replace('{title}', 'Final Streak:').replace('{number}', `${finalStreak} / 3`) + `<div class="feedback-area"> <div class="loss-text">+0 Tokens</div> </div>`;
-                    }                  
-                }
-
                 return standardFeedback;
 
             },
@@ -580,10 +624,13 @@ const exp = (function() {
             trial_duration: 2000,
             data: {round: round + 1},
             on_finish: function(data) {
-                data.trial = trial
-                if (settings.gameType[round] == "streak" && settings.streakType == "binary" && finalStreak == 3) {
-                    finalStreak = 0;
+                if (tokenArray_win.length == 0) {
+                    tokenArray_win = makeTokenArray_win();
                 };
+                if (tokenArray_loss.length == 0) {
+                    tokenArray_loss = makeTokenArray_loss();
+                };
+                data.trial = trial;
                 trial++;
             },
         };
