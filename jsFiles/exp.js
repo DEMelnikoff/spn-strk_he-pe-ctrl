@@ -17,7 +17,7 @@ const exp = (function() {
         wedgeText: ['3 winning wedges (which are green)', '1 losing wedge (which is gray)'],
         gameType: [['binary', 'streak'], ['streak', 'binary']][Math.floor(Math.random() * 2)],
         binaryType: ['standard', 'he-enhancing', 'pe-enhancing'][Math.floor(Math.random() * 3)],
-        gif: `<img src="./img/easyWheel.gif" style="width:400px; height:400px">`,
+        gif: `<img src="./img/wheel_gif.gif" style="width:400px; height:400px">`,
         nSpins: 30,
     };
 
