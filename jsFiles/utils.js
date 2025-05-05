@@ -27,6 +27,7 @@ const filename = `${subject_id}.csv`;
 // define completion code for Prolific
 const completionCode = "CW0CMZ8Y";
 
+
 // when true, boot participant from study without redirecting to Prolific
 let boot = false;
 
@@ -66,7 +67,7 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
   const arc = (2 * PI) / tot; // arc sizes in radians
 
   /* spin dynamics */
-  let friction = 0.98;  // 0.995=soft, 0.99=mid, 0.98=hard
+  const friction = 0.98;  // 0.995=soft, 0.99=mid, 0.98=hard
   const angVelMin = 5; // Below that number will be treated as a stop
   let angVelMax = 0; // Random ang.vel. to acceletare to 
   let angVel = 0;    // Current angular velocity
@@ -146,63 +147,75 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
     };   
   };
 
-  const giveMoment = function(speed) {
 
-    // stop accelerating when max speed is reached
-    if (lose) {
-      if (Math.abs(speed) >= 29.5 && liveSectorLabel == "L") isAccelerating = false;
-    } else {
-      if (Math.abs(speed) >= angVelMax) isAccelerating = false;
-    }
+  const giveMoment = function(initialSpeed) {
 
-    let liveSector = sectors[getIndex(oldAngle)];
-    liveSectorLabel = liveSector.label;
-    oldAngle_corrected = (oldAngle < 0) ? 360 + (oldAngle % 360) : oldAngle % 360;
+    let speed = initialSpeed;
+    let lastTimestamp = null;
 
+    function step(timestamp) {
+      if (!lastTimestamp) lastTimestamp = timestamp;
+      const deltaTime = (timestamp - lastTimestamp) / 1000; // seconds
+      lastTimestamp = timestamp;
 
-    // accelerate
-    if (isAccelerating) {
+      // stop accelerating when max speed is reached
       if (lose) {
-        speed = (direction == 1) ? Math.min(speed * 1.06, 29.5) : Math.max(speed * 1.06, -29.5);
+        if (Math.abs(speed) >= 29.5 && liveSectorLabel == "L") isAccelerating = false;
       } else {
-        speed *= 1.06
-      };
-      const req = window.requestAnimationFrame(giveMoment.bind(this, speed));
-      oldAngle += speed;
-      lastAngles.shift();
-      lastAngles.push(oldAngle);
-      render(oldAngle);
-    }
-    
-    // decelerate and stop
-    else {
-      isAccelerating = false;
-      speed *= friction; // Decelerate by friction  
-      const req = window.requestAnimationFrame(giveMoment.bind(this, speed));
+        console.log(speed, isAccelerating)
+        if (Math.abs(speed) >= angVelMax) isAccelerating = false;
+      }
 
-      if ( (Math.abs(speed) > angVelMin * .2) || (Math.abs(speed) > angVelMin * .05 && oldAngle_corrected < 275) || (Math.abs(speed) > angVelMin * .05 && oldAngle_corrected > 300) ) {
-        oldAngle += speed;
+      let liveSector = sectors[getIndex(oldAngle)];
+      liveSectorLabel = liveSector.label;
+      oldAngle_corrected = (oldAngle < 0) ? 360 + (oldAngle % 360) : oldAngle % 360;
+
+
+      // accelerate
+      if (isAccelerating) {
+        let growthRate = Math.log(1.06) * 60;
+        if (lose) {
+          speed = (direction === 1) ? Math.min(speed * Math.exp(growthRate * deltaTime), 29.5) : Math.max(speed * Math.exp(growthRate * deltaTime), -29.5);        
+        } else {
+          speed *= Math.exp(growthRate * deltaTime);
+        };
+        requestAnimationFrame(step);
+        oldAngle += speed * deltaTime * 60;
         lastAngles.shift();
         lastAngles.push(oldAngle);
-        render(oldAngle);  
-      } else if (!lose && Math.abs(speed) > angVelMin * .1) {
-        // decelerate
-        oldAngle += speed;
-        lastAngles.shift();
-        lastAngles.push(oldAngle);
-        render(oldAngle);       
-      } else {
-        // stop spinner
-        speed = 0;
-        friction = .98;
-        currentAngle = oldAngle;
-        let sector = sectors[getIndex(currentAngle)];
-        spinnerData.outcome = sector.label;
-        drawSector(sectors, getIndex(currentAngle));
-        updateScore(parseFloat(sector.label), sector.color);
-        window.cancelAnimationFrame(req);
+        render(oldAngle);
+      }
+      
+      // decelerate and stop
+      else {
+        let decayRate = Math.log(friction) * 60; // friction < 1, so log is negative
+        isAccelerating = false;
+        speed *= Math.exp(decayRate * deltaTime); // Exponential decay
+        requestAnimationFrame(step);
+
+        if ( (Math.abs(speed) > angVelMin * .2) || (Math.abs(speed) > angVelMin * .05 && oldAngle_corrected < 275) || (Math.abs(speed) > angVelMin * .05 && oldAngle_corrected > 300) ) {
+          oldAngle += speed * deltaTime * 60;
+          lastAngles.shift();
+          lastAngles.push(oldAngle);
+          render(oldAngle);  
+        } else if (!lose && Math.abs(speed) > angVelMin * .1) {
+          // decelerate
+          oldAngle += speed * deltaTime * 60;
+          lastAngles.shift();
+          lastAngles.push(oldAngle);
+          render(oldAngle);       
+        } else {
+          // stop spinner
+          speed = 0;
+          currentAngle = oldAngle;
+          let sector = sectors[getIndex(currentAngle)];
+          spinnerData.outcome = sector.label;
+          drawSector(sectors, getIndex(currentAngle));
+          updateScore(parseFloat(sector.label), sector.color);
+        };
       };
     };
+    requestAnimationFrame(step);
   };
 
   /* generate random float in range min-max */
