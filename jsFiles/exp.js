@@ -547,8 +547,8 @@ const exp = (function() {
         const spin = {
             type: jsPsychCanvasButtonResponse,
             stimulus: function(c, spinnerData) {
-                let sectorsShuffled = (trial == settings.nSpins) ? sectors : jsPsych.randomization.repeat(sectors, 1);
                 let loss = (trial == settings.nSpins) ? true : false;
+                let sectorsShuffled = (loss) ? sectors : jsPsych.randomization.repeat(sectors, 1);
                 createSpinner(c, spinnerData, sectorsShuffled, loss);
             },
             canvas_size: [500, 500],

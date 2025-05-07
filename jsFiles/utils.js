@@ -88,6 +88,8 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
   let liveSectorLabel;
   let direction;
 
+  let loseSpeed = 37
+
   /* define spinning functions */
 
   const onGrab = (x, y) => {
@@ -114,6 +116,7 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
       return
     lastAngles.shift();
     let deltaAngle = calculateAngle(x, y) - startAngle;
+    console.log((currentAngle < 0) ? 360 + (currentAngle % 360) : currentAngle % 360);
     currentAngle = deltaAngle + oldAngle;
     lastAngles.push(currentAngle);
     let speed = lastAngles[2] - lastAngles[0];
@@ -127,6 +130,7 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
   const render = (deg) => {
     canvas.style.transform = `rotate(${deg}deg)`;
   };
+
 
   const onRelease = function() {
     isGrabbed = false;
@@ -147,7 +151,6 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
     };   
   };
 
-
   const giveMoment = function(initialSpeed) {
 
     let speed = initialSpeed;
@@ -160,7 +163,7 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
 
       // stop accelerating when max speed is reached
       if (lose) {
-        if (Math.abs(speed) >= 29.5 && liveSectorLabel == "L") isAccelerating = false;
+        if (Math.abs(speed) >= loseSpeed && liveSectorLabel == "L") isAccelerating = false;
       } else {
         if (Math.abs(speed) >= angVelMax) isAccelerating = false;
       }
@@ -174,7 +177,7 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
       if (isAccelerating) {
         let growthRate = Math.log(1.06) * 60;
         if (lose) {
-          speed = (direction === 1) ? Math.min(speed * Math.exp(growthRate * deltaTime), 29.5) : Math.max(speed * Math.exp(growthRate * deltaTime), -29.5);        
+          speed = (direction === 1) ? Math.min(speed * Math.exp(growthRate * deltaTime), loseSpeed) : Math.max(speed * Math.exp(growthRate * deltaTime), -loseSpeed);        
         } else {
           speed *= Math.exp(growthRate * deltaTime);
         };
@@ -191,8 +194,8 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
         isAccelerating = false;
         speed *= Math.exp(decayRate * deltaTime); // Exponential decay
         requestAnimationFrame(step);
-
-        if ( (Math.abs(speed) > angVelMin * .2) || (Math.abs(speed) > angVelMin * .05 && oldAngle_corrected < 275) || (Math.abs(speed) > angVelMin * .05 && oldAngle_corrected > 300) ) {
+        console.log(speed, oldAngle_corrected);
+        if ( (Math.abs(speed) > angVelMin * .2) || (Math.abs(speed) > angVelMin * .08 && oldAngle_corrected < 290) || (Math.abs(speed) > angVelMin * .08 && oldAngle_corrected > 340) ) {
           oldAngle += speed * deltaTime * 60;
           lastAngles.shift();
           lastAngles.push(oldAngle);
