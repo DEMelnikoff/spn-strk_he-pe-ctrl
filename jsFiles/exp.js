@@ -29,9 +29,6 @@ const exp = (function() {
         nSpins: settings.nSpins,
     });
 
-    console.log(settings.gameType, settings.binaryType);
-
-
    /*
     *
     *   INSTRUCTIONS

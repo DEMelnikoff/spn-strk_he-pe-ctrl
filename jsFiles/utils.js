@@ -116,7 +116,6 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
       return
     lastAngles.shift();
     let deltaAngle = calculateAngle(x, y) - startAngle;
-    console.log((currentAngle < 0) ? 360 + (currentAngle % 360) : currentAngle % 360);
     currentAngle = deltaAngle + oldAngle;
     lastAngles.push(currentAngle);
     let speed = lastAngles[2] - lastAngles[0];
@@ -194,7 +193,6 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
         isAccelerating = false;
         speed *= Math.exp(decayRate * deltaTime); // Exponential decay
         requestAnimationFrame(step);
-        console.log(speed, oldAngle_corrected);
         if ( (Math.abs(speed) > angVelMin * .2) || (Math.abs(speed) > angVelMin * .08 && oldAngle_corrected < 290) || (Math.abs(speed) > angVelMin * .08 && oldAngle_corrected > 340) ) {
           oldAngle += speed * deltaTime * 60;
           lastAngles.shift();
