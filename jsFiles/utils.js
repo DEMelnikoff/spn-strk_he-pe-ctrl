@@ -87,6 +87,7 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
   let spin_num = 5             // number of spins
   let liveSectorLabel;
   let direction;
+  let animId = null;          // current requestAnimationFrame handle
 
   let loseSpeed = 37
 
@@ -180,7 +181,7 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
         } else {
           speed *= Math.exp(growthRate * deltaTime);
         };
-        requestAnimationFrame(step);
+        animId = requestAnimationFrame(step);
         oldAngle += speed * deltaTime * 60;
         lastAngles.shift();
         lastAngles.push(oldAngle);
@@ -192,7 +193,7 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
         let decayRate = Math.log(friction) * 60; // friction < 1, so log is negative
         isAccelerating = false;
         speed *= Math.exp(decayRate * deltaTime); // Exponential decay
-        requestAnimationFrame(step);
+        animId = requestAnimationFrame(step);
         if ( (Math.abs(speed) > angVelMin * .2) || (Math.abs(speed) > angVelMin * .08 && oldAngle_corrected < 290) || (Math.abs(speed) > angVelMin * .08 && oldAngle_corrected > 340) ) {
           oldAngle += speed * deltaTime * 60;
           lastAngles.shift();
@@ -207,6 +208,10 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
         } else {
           // stop spinner
           speed = 0;
+          if (animId !== null) {
+            cancelAnimationFrame(animId);
+            animId = null;
+          };
           currentAngle = oldAngle;
           let sector = sectors[getIndex(currentAngle)];
           spinnerData.outcome = sector.label;
@@ -215,7 +220,7 @@ const createSpinner = function(canvas, spinnerData, sectors, lose) {
         };
       };
     };
-    requestAnimationFrame(step);
+    animId = requestAnimationFrame(step);
   };
 
   /* generate random float in range min-max */
